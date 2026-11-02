@@ -12,12 +12,18 @@
   <nav>
     <a th:href="@{/servicios}" th:classappend="${activo == 'servicios'} ? 'on'">Servicios</a>
     <a th:href="@{/reservar}" th:classappend="${activo == 'reservar'} ? 'on'">Reservar</a>
-    <a th:href="@{/mis-citas}" th:classappend="${activo == 'citas'} ? 'on'">Mis citas</a>
+    <a th:if="${yo != null}" th:href="@{/mis-citas}" th:classappend="${activo == 'citas'} ? 'on'">Mis citas</a>
     <a th:href="@{/notificaciones}" th:classappend="${activo == 'notificaciones'} ? 'on'">Notificaciones</a>
   </nav>
-  <div class="user">
+  <div class="user" th:if="${yo != null}">
     <span class="avatar" th:text="${yo.iniciales}">VR</span><span th:text="${yo.nombreCompleto}">Cliente</span>
     <form th:action="@{/logout}" method="post"><button class="link">Salir</button></form>
+  </div>
+  <!-- Modo invitado: sin sesion se ofrecen las dos puertas de entrada -->
+  <div class="user invitado" th:unless="${yo != null}">
+    <span class="muted">Invitado</span>
+    <a class="btn sec sm" th:href="@{/login}">Iniciar sesión</a>
+    <a class="btn sm" th:href="@{/registro}">Registrarse</a>
   </div>
 </header>
 <!-- Menu lateral de recepcion (administrador) y estilista -->
