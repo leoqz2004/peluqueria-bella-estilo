@@ -1,6 +1,6 @@
 # Sistema de Gestión y Reserva de Citas para una Peluquería
 
-Documentación técnica para desarrolladores · Curso Integrador I: Sistemas – Software · UTP · APF2
+Documentación técnica para desarrolladores · Curso Integrador I: Sistemas – Software · UTP · APF3
 
 > Alternativa seleccionada: **aplicación web Java (Spring Boot + Thymeleaf) con MySQL** (≈65 % Java, cumple el mínimo de 50 %).
 

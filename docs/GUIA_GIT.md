@@ -1,26 +1,62 @@
 # Guía de control de versiones (Git + GitHub)
 
 ## Estado actual del repositorio
-- `main`: versión base recibida (APF2).
-- `feature/acceso-invitado`: todos los cambios del Avance 3, en commits pequeños y con prefijo `feat:`, `build:`, `docs:`, `test:`.
+
+- `main`: rama principal con la versión actual del proyecto APF3.
+- `feature/acceso-invitado`: rama de desarrollo utilizada para implementar el flujo de acceso como invitado y recuperación de la reserva.
+- Los cambios fueron registrados mediante commits descriptivos y posteriormente integrados a `main` mediante el Pull Request #1.
+
+Para revisar el historial:
 
 ```bash
-git log --oneline --graph --all
+git log --oneline --graph --all --decorate
 ```
 
-## Publicar en GitHub (una sola vez)
-1. Crear un repositorio **vacío** en GitHub (sin README).
-2. En la carpeta del proyecto:
+## Publicación en GitHub
+
+1. Crear el repositorio en GitHub.
+2. Configurar el repositorio remoto:
+
 ```bash
-git remote add origin https://github.com/<usuario>/peluqueria-citas.git
+git remote add origin https://github.com/leoqz2004/peluqueria-bella-estilo.git
+```
+
+3. Publicar las ramas:
+
+```bash
 git push -u origin main
 git push -u origin feature/acceso-invitado
 ```
-3. En GitHub, abrir un **Pull Request** de `feature/acceso-invitado` → `main`, revisar entre integrantes y hacer *merge*.
 
-## Reglas del equipo
-- Un **responsable de control de versiones** aprueba los Pull Requests.
-- Una rama por historia de usuario: `feature/<nombre>`; correcciones: `fix/<nombre>`.
-- Commits pequeños y descriptivos: `feat: ...`, `fix: ...`, `docs: ...`, `test: ...`.
-- Nunca subir contraseñas ni `application-local.properties` (ya está en `.gitignore`), ni `logs/` ni `target/`.
-- Cada integrante debe tener commits propios: es la evidencia de **autoría** que pide la rúbrica.
+4. Crear un Pull Request de `feature/acceso-invitado` hacia `main`.
+5. Revisar los cambios y realizar el merge.
+6. Actualizar la rama principal local:
+
+```bash
+git checkout main
+git pull
+```
+
+## Convenciones utilizadas
+
+- Rama principal: `main`.
+- Ramas de funcionalidad: `feature/<nombre>`.
+- Ramas de corrección: `fix/<nombre>`.
+- Commits descriptivos utilizando prefijos como:
+  - `feat:` para nuevas funcionalidades.
+  - `fix:` para correcciones.
+  - `docs:` para documentación.
+  - `build:` para configuración y dependencias.
+  - `test:` para pruebas.
+
+## Buenas prácticas de seguridad
+
+- No subir contraseñas, credenciales ni datos sensibles al repositorio.
+- Mantener fuera del repositorio los archivos locales de configuración que contengan credenciales.
+- No subir las carpetas `logs/` ni `target/`.
+- Utilizar variables de entorno para las credenciales de la base de datos.
+- Mantener un archivo `.gitignore` actualizado.
+
+## Estado de la entrega
+
+El proyecto es de desarrollo individual. El repositorio contiene el código fuente, documentación, historial de cambios, rama de desarrollo y evidencia del proceso de integración mediante Pull Request.
