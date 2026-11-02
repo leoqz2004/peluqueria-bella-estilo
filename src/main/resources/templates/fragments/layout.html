@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title th:text="${titulo} + ' · Bella Estilo'">Bella Estilo</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<!-- Barra superior del cliente -->
+<header class="topnav" th:fragment="topnav(activo)">
+  <a class="brand" th:href="@{/}"><span class="logo">B</span> Bella Estilo</a>
+  <nav>
+    <a th:href="@{/servicios}" th:classappend="${activo == 'servicios'} ? 'on'">Servicios</a>
+    <a th:href="@{/reservar}" th:classappend="${activo == 'reservar'} ? 'on'">Reservar</a>
+    <a th:href="@{/mis-citas}" th:classappend="${activo == 'citas'} ? 'on'">Mis citas</a>
+    <a th:href="@{/notificaciones}" th:classappend="${activo == 'notificaciones'} ? 'on'">Notificaciones</a>
+  </nav>
+  <div class="user">
+    <span class="avatar" th:text="${yo.iniciales}">VR</span><span th:text="${yo.nombreCompleto}">Cliente</span>
+    <form th:action="@{/logout}" method="post"><button class="link">Salir</button></form>
+  </div>
+</header>
+<!-- Menu lateral de recepcion (administrador) y estilista -->
+<aside class="sidebar" th:fragment="side(activo)">
+  <a class="brand" th:href="@{/}"><span class="logo">B</span> Bella Estilo</a>
+  <th:block th:if="${yo.rol.nombre == 'ADMINISTRADOR'}">
+    <a class="item" th:href="@{/admin/panel}" th:classappend="${activo == 'panel'} ? 'on'">Panel</a>
+    <a class="item" th:href="@{/admin/citas}" th:classappend="${activo == 'citas'} ? 'on'">Citas</a>
+    <a class="item" th:href="@{/admin/servicios}" th:classappend="${activo == 'servicios'} ? 'on'">Servicios</a>
+    <a class="item" th:href="@{/admin/estilistas}" th:classappend="${activo == 'estilistas'} ? 'on'">Estilistas</a>
+    <a class="item" th:href="@{/admin/clientes}" th:classappend="${activo == 'clientes'} ? 'on'">Clientes</a>
+    <a class="item" th:href="@{/admin/reportes/citas}" th:classappend="${activo == 'reportes'} ? 'on'">Reportes</a>
+  </th:block>
+  <th:block th:if="${yo.rol.nombre == 'ESTILISTA'}">
+    <a class="item on" th:href="@{/agenda}">Mi agenda</a>
+  </th:block>
+  <div class="pie">
+    <form th:action="@{/logout}" method="post"><button class="link">Cerrar sesión</button></form>
+    <span th:text="${yo.rol.nombre == 'ADMINISTRADOR' ? 'Recepción' : 'Estilista'}">Rol</span> · <span th:text="${yo.nombreCorto}">Usuario</span>
+  </div>
+</aside>
+<th:block th:fragment="scripts"><script th:src="@{/js/app.js}"></script></th:block>
+</body>
+</html>

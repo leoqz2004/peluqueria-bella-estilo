@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mis citas')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topnav('citas')}"></header>
+<main class="container">
+  <h1>Mis citas</h1><p class="sub">Consulta, reprograma o cancela tus reservas</p>
+  <div class="okmsg" th:if="${param.creada}">Cita registrada. Recibirás la confirmación y un recordatorio 24 h y 2 h antes.</div>
+  <div class="okmsg" th:if="${param.cancelada}">La cita fue cancelada y el horario quedó libre.</div>
+  <div class="okmsg" th:if="${param.reprogramada}">La cita fue reprogramada.</div>
+  <div class="tabs" data-tabs>
+    <button class="chip" data-tab="proximas" th:text="'Próximas (' + ${#lists.size(proximas)} + ')'">Próximas</button>
+    <button class="chip" data-tab="historial" th:text="'Historial (' + ${#lists.size(historial)} + ')'">Historial</button>
+  </div>
+  <div data-panel="proximas">
+    <p class="vacio" th:if="${#lists.isEmpty(proximas)}">No tienes citas próximas. <a th:href="@{/reservar}">Reserva una</a>.</p>
+    <div class="cita" th:each="c : ${proximas}">
+      <span class="ini" th:text="${c.estilista.iniciales}">MR</span>
+      <div class="info"><b th:text="${c.serviciosTexto}">Corte</b>
+        <small th:text="${c.estilista.nombreCorto + ' · ' + #temporals.format(c.fecha,'EEE d MMM') + ' · ' + #temporals.format(c.horaInicio,'HH:mm')}">detalle</small></div>
+      <span class="badge" th:classappend="${c.estado}" th:text="${c.estado}">PENDIENTE</span>
+      <button class="btn sec sm" data-open-modal="m-reprogramar" th:data-action="@{/citas/{id}/reprogramar(id=${c.id})}">Reprogramar</button>
+      <button class="btn peligro sm" data-open-modal="m-cancelar" th:data-action="@{/citas/{id}/cancelar(id=${c.id})}"
+              th:data-detalle="${c.serviciosTexto + ' con ' + c.estilista.nombreCorto + ' del ' + #temporals.format(c.fecha,'d/MM') + ' a las ' + #temporals.format(c.horaInicio,'HH:mm')}">Cancelar</button>
+    </div>
+  </div>
+  <div data-panel="historial">
+    <p class="vacio" th:if="${#lists.isEmpty(historial)}">Aún no tienes historial.</p>
+    <div class="cita" th:each="c : ${historial}">
+      <span class="ini" th:text="${c.estilista.iniciales}">MR</span>
+      <div class="info"><b th:text="${c.serviciosTexto}">Corte</b>
+        <small th:text="${c.estilista.nombreCorto + ' · ' + #temporals.format(c.fecha,'dd/MM/yyyy') + ' · ' + #temporals.format(c.horaInicio,'HH:mm') + ' · S/ ' + #numbers.formatDecimal(c.total,1,2)}">detalle</small></div>
+      <span class="badge" th:classappend="${c.estado}" th:text="${c.estado}">ATENDIDA</span>
+    </div>
+  </div>
+</main>
+
+<dialog id="m-cancelar">
+  <h3>¿Cancelar esta cita?</h3>
+  <p>Se cancelará <b data-fill="detalle"></b>. El horario quedará libre para otros clientes.</p>
+  <form method="post" th:action="@{/citas/0/cancelar}">
+    <label>Motivo (opcional)</label><input name="motivo" maxlength="200" placeholder="Tengo un imprevisto">
+    <div class="modal-pie"><button type="button" class="btn sec" data-close>Volver</button><button class="btn peligro">Sí, cancelar cita</button></div>
+  </form>
+</dialog>
+<dialog id="m-reprogramar">
+  <h3>Reprogramar cita</h3><p>Elige una nueva fecha; solo verás horas libres.</p>
+  <form method="post" th:action="@{/citas/0/reprogramar}">
+    <label>Nueva fecha</label><input type="date" name="fecha" id="rep-fecha" required>
+    <label>Hora disponible</label><select name="hora" id="rep-hora" required><option value="">Elige una fecha…</option></select>
+    <div class="modal-pie"><button type="button" class="btn sec" data-close>Volver</button><button class="btn">Reprogramar</button></div>
+  </form>
+</dialog>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body></html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="confirmar-cancelar(volver)">
+<dialog id="m-confirmar">
+  <h3>Confirmar cita</h3><p>¿Confirmas la cita de <b data-fill="detalle"></b>? Se enviará una notificación al cliente.</p>
+  <form method="post" th:action="@{/admin/citas/0/confirmar}"><input type="hidden" name="volver" th:value="${volver}">
+    <div class="modal-pie"><button type="button" class="btn sec" data-close>Volver</button><button class="btn">Sí, confirmar</button></div></form>
+</dialog>
+<dialog id="m-cancelar">
+  <h3>Cancelar cita</h3><p>Se cancelará <b data-fill="detalle"></b> y el horario quedará libre.</p>
+  <form method="post" th:action="@{/citas/0/cancelar}"><input type="hidden" name="volver" th:value="${volver}">
+    <label>Motivo (opcional)</label><input name="motivo" maxlength="200">
+    <div class="modal-pie"><button type="button" class="btn sec" data-close>Volver</button><button class="btn peligro">Sí, cancelar</button></div></form>
+</dialog>
+</th:block>
+</body></html>

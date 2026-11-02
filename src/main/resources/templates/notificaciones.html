@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Notificaciones')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topnav('notificaciones')}"></header>
+<main class="container">
+  <h1>Notificaciones y preferencias</h1><p class="sub">Historial de avisos y canal de recordatorios</p>
+  <div class="okmsg" th:if="${param.guardado}">Preferencias guardadas.</div>
+  <div class="split">
+    <div>
+      <p class="vacio" th:if="${#lists.isEmpty(avisos)}">Aún no tienes avisos.</p>
+      <div class="aviso" th:each="n : ${avisos}">
+        <span class="ico" th:text="${n.tipo.name() == 'RECORDATORIO' ? '🔔' : n.tipo.name() == 'CONFIRMACION' ? '✅' : n.tipo.name() == 'CANCELACION' ? '❌' : n.tipo.name() == 'REPROGRAMACION' ? '📅' : '📝'}">🔔</span>
+        <div class="t"><b th:text="${n.tipo}">Tipo</b><br><span th:text="${n.mensaje}">Mensaje</span><br>
+          <small th:text="${#temporals.format(n.fechaProgramada,'dd/MM HH:mm') + ' · ' + (n.estadoEnvio.name() == 'ENVIADA' ? 'Enviada' : n.estadoEnvio.name() == 'PENDIENTE' ? 'Programada' : 'Fallida')}">fecha</small></div>
+        <span class="badge" style="background:#e7edf9;color:#35558a" th:text="${n.canal}">CORREO</span>
+      </div>
+    </div>
+    <form class="card" th:action="@{/notificaciones/preferencias}" method="post">
+      <h3 style="margin:0">Preferencias de recordatorio</h3>
+      <label class="chk"><input type="checkbox" name="whatsapp" value="true" th:checked="${cliente.aceptaWhatsapp}"> WhatsApp</label>
+      <label class="chk"><input type="checkbox" name="correo" value="true" th:checked="${cliente.aceptaCorreo}"> Correo electrónico</label>
+      <label>Anticipación</label><input value="24 h y 2 h antes" disabled>
+      <p><button class="btn">Guardar cambios</button></p>
+    </form>
+  </div>
+</main>
+</body></html>

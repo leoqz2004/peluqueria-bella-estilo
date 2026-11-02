@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reservar cita')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topnav('reservar')}"></header>
+<main class="container" id="wizard">
+  <div class="crumbs">Inicio › Servicios › <b>Reservar cita</b></div>
+  <h1>Nueva reserva</h1><p class="sub">Completa los pasos para agendar tu cita</p>
+  <div class="errmsg" th:if="${param.error}">Revisa los datos de la reserva e inténtalo otra vez.</div>
+  <div class="pasos">
+    <span class="paso on" data-paso="1"><i>1</i> Servicio</span><span class="paso" data-paso="2"><i>2</i> Estilista</span>
+    <span class="paso" data-paso="3"><i>3</i> Horario</span><span class="paso" data-paso="4"><i>4</i> Confirmar</span>
+  </div>
+  <div class="split">
+    <div>
+      <!-- Paso 1 -->
+      <section class="paso-panel" data-paso="1">
+        <h3>Elige uno o más servicios</h3>
+        <div class="grid g2">
+          <label class="opcion lista" th:each="s : ${servicios}" style="margin:0;color:inherit;font-size:inherit">
+            <input type="checkbox" name="servicioIds" th:value="${s.id}" th:checked="${preselect != null and preselect == s.id}"
+                   th:data-nombre="${s.nombre}" th:data-min="${s.duracionMin}" th:data-precio="${s.precio}">
+            <span><b th:text="${s.nombre}">Corte</b><br><small th:text="${s.duracionMin + ' min · S/ ' + #numbers.formatDecimal(s.precio,1,2)}">40 min</small></span>
+          </label>
+        </div>
+        <div class="nav-pasos"><button type="button" class="btn btn-sig">Continuar</button></div>
+      </section>
+      <!-- Paso 2 -->
+      <section class="paso-panel hidden" data-paso="2">
+        <h3>Elige tu estilista</h3>
+        <div class="grid g3">
+          <div class="opcion est-card" th:each="e : ${estilistas}" th:data-id="${e.id}" th:data-nombre="${e.nombreCorto}" th:data-servicios="${e.servicioIdsCsv}">
+            <span class="ava" th:text="${e.iniciales}">MR</span><br><b th:text="${e.nombreCorto}">Milagros R.</b><br><small th:text="${e.especialidad}">Corte</small>
+          </div>
+        </div>
+        <p id="sin-estilistas" class="vacio hidden">Ningún estilista realiza todos los servicios elegidos. Vuelve atrás y ajusta la selección.</p>
+        <div class="nav-pasos"><button type="button" class="btn sec btn-atras">Atrás</button><button type="button" class="btn btn-sig">Continuar</button></div>
+      </section>
+      <!-- Paso 3 -->
+      <section class="paso-panel hidden" data-paso="3">
+        <h3>Elige fecha y hora</h3><p class="sub" style="margin:0">Solo se muestran horarios libres del estilista seleccionado</p>
+        <div class="dias" id="dias"></div>
+        <div class="slots" id="slots"><span class="vacio">Elige un día para ver los horarios.</span></div>
+        <div class="nav-pasos"><button type="button" class="btn sec btn-atras">Atrás</button><button type="button" class="btn btn-sig">Continuar</button></div>
+      </section>
+      <!-- Paso 4 -->
+      <section class="paso-panel hidden" data-paso="4">
+        <h3>Confirma tu cita</h3>
+        <form th:action="@{/reservar}" method="post" class="card">
+          <table>
+            <tr><td>Servicio(s)</td><td class="n" id="conf-servicios"></td></tr>
+            <tr><td>Estilista</td><td class="n" id="conf-estilista"></td></tr>
+            <tr><td>Fecha</td><td class="n" id="conf-fecha"></td></tr>
+            <tr><td>Hora</td><td class="n" id="conf-hora"></td></tr>
+            <tr><td>Total a pagar en local</td><td class="n c-vino" id="conf-total"></td></tr>
+          </table>
+          <input type="hidden" name="estilistaId" id="h-estilista"><input type="hidden" name="fecha" id="h-fecha"><input type="hidden" name="hora" id="h-hora">
+          <div id="h-servicios"></div>
+          <div class="nav-pasos"><button type="button" class="btn sec btn-atras">Atrás</button><button class="btn">Confirmar cita</button></div>
+        </form>
+      </section>
+    </div>
+    <aside class="card resumen">
+      <h3 style="margin:0">Resumen</h3>
+      <dl style="margin:0"><dt>Servicio(s)</dt><dd id="res-servicios">—</dd><dt>Duración</dt><dd id="res-duracion">—</dd>
+        <dt>Estilista</dt><dd id="res-estilista">—</dd><dt>Fecha y hora</dt><dd id="res-fecha">—</dd></dl>
+      <div class="tot"><span>Total</span><span class="c-vino" id="res-total">S/ 0.00</span></div>
+    </aside>
+  </div>
+</main>
+<script th:src="@{/js/reservar.js}"></script>
+</body></html>

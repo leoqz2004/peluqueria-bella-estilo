@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Crear cuenta')}"></head>
+<body>
+<div class="auth">
+  <div class="hero">
+    <span class="marca">Bella Estilo</span>
+    <h2>Crea tu cuenta y reserva en minutos.</h2>
+    <p>Recibe confirmaciones y recordatorios 24 h y 2 h antes de tu cita.</p>
+  </div>
+  <div class="formbox"><div class="inner ancho">
+    <h1>Crear cuenta</h1><p class="sub">Regístrate para reservar tus citas en línea</p>
+    <form th:action="@{/registro}" th:object="${registro}" method="post">
+      <div class="grid g2">
+        <div><label>Nombres</label><input th:field="*{nombres}"><span class="err" th:errors="*{nombres}"></span></div>
+        <div><label>Apellidos</label><input th:field="*{apellidos}"><span class="err" th:errors="*{apellidos}"></span></div>
+        <div><label>Correo electrónico</label><input type="email" th:field="*{email}"><span class="err" th:errors="*{email}"></span></div>
+        <div><label>Teléfono / WhatsApp</label><input th:field="*{telefono}" placeholder="+51 987 654 321"><span class="err" th:errors="*{telefono}"></span></div>
+        <div><label>Contraseña (mín. 8)</label><input type="password" th:field="*{password}"><span class="err" th:errors="*{password}"></span></div>
+        <div><label>Confirmar contraseña</label><input type="password" th:field="*{confirmPassword}"><span class="err" th:errors="*{confirmPassword}"></span></div>
+      </div>
+      <label class="chk"><input type="checkbox" th:field="*{aceptaTerminos}"> Acepto los Términos y la Política de privacidad</label>
+      <span class="err" th:errors="*{aceptaTerminos}"></span>
+      <label class="chk"><input type="checkbox" th:field="*{recordatorios}"> Deseo recibir recordatorios por WhatsApp/correo</label>
+      <p><button class="btn" style="width:100%">Registrarme</button></p>
+    </form>
+    <p class="centro">¿Ya tienes cuenta? <a th:href="@{/login}"><b>Inicia sesión</b></a></p>
+  </div></div>
+</div>
+</body></html>

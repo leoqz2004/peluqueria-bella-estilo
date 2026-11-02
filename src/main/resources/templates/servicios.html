@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Servicios')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topnav('servicios')}"></header>
+<main class="container">
+  <h1>Catálogo de servicios</h1><p class="sub">Elige el servicio que deseas reservar</p>
+  <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+    <input id="buscar-servicio" placeholder="🔍 Buscar corte, tinte, peinado..." style="max-width:300px">
+    <div class="chips" style="margin:0">
+      <button class="chip on" data-filtro="Todos">Todos</button>
+      <button class="chip" data-filtro="Corte">Corte</button><button class="chip" data-filtro="Color">Color</button>
+      <button class="chip" data-filtro="Peinado">Peinado</button><button class="chip" data-filtro="Tratamiento">Tratamiento</button>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:1rem">
+    <div class="card svc svc-card" th:each="s : ${servicios}" th:data-cat="${s.categoria.nombre}"
+         th:data-texto="${#strings.toLowerCase(s.nombre + ' ' + s.descripcion + ' ' + s.categoria.nombre)}">
+      <span class="cat" th:text="${s.categoria.nombre}">Corte</span>
+      <h3 th:text="${s.nombre}">Corte de cabello</h3>
+      <p th:text="${s.descripcion + ' · ' + s.duracionMin + ' min'}">Descripción</p>
+      <div class="pie"><span class="precio" th:text="'S/ ' + ${#numbers.formatDecimal(s.precio,1,2)}">S/ 35.00</span>
+        <a class="btn sm" th:href="@{/reservar(servicio=${s.id})}">Reservar</a></div>
+    </div>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body></html>

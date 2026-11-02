@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Panel de recepción')}"></head>
+<body class="with-side">
+<aside th:replace="~{fragments/layout :: side('panel')}"></aside>
+<main class="content">
+  <h1>Panel de recepción</h1><p class="sub" th:text="${#temporals.format(hoy,'EEEE d MMMM yyyy')}">Hoy</p>
+  <div class="grid g4">
+    <div class="card kpi"><small>CITAS HOY</small><b th:text="${total}">8</b></div>
+    <div class="card kpi"><small>PENDIENTES</small><b class="c-vino" th:text="${pendientes}">3</b></div>
+    <div class="card kpi"><small>ATENDIDAS</small><b class="c-ok" th:text="${atendidas}">4</b></div>
+    <div class="card kpi"><small>CANCELADAS</small><b class="c-warn" th:text="${canceladas}">1</b></div>
+  </div>
+  <h3>Próximas citas del día</h3>
+  <div class="tablewrap"><table>
+    <tr><th>CLIENTE</th><th>SERVICIO</th><th>ESTILISTA</th><th>HORA</th><th>ESTADO</th><th>ACCIONES</th></tr>
+    <tr th:each="c : ${citas}">
+      <td class="n" th:text="${c.cliente.nombreCompleto}">Cliente</td><td th:text="${c.serviciosTexto}">Servicio</td>
+      <td th:text="${c.estilista.nombreCorto}">Estilista</td><td th:text="${#temporals.format(c.horaInicio,'HH:mm')}">15:00</td>
+      <td><span class="badge" th:classappend="${c.estado}" th:text="${c.estado}">PENDIENTE</span></td>
+      <td><span class="acc" th:if="${c.estado.name() == 'PENDIENTE'}">
+        <button class="t-ok" data-open-modal="m-confirmar" th:data-action="@{/admin/citas/{id}/confirmar(id=${c.id})}"
+                th:data-detalle="${c.cliente.nombreCompleto + ' para ' + c.serviciosTexto + ' a las ' + #temporals.format(c.horaInicio,'HH:mm')}">Confirmar</button>
+        <button class="t-warn" data-open-modal="m-cancelar" th:data-action="@{/citas/{id}/cancelar(id=${c.id})}"
+                th:data-detalle="${c.cliente.nombreCompleto + ' — ' + c.serviciosTexto}">Cancelar</button></span>
+        <span th:unless="${c.estado.name() == 'PENDIENTE'}">—</span></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(citas)}"><td colspan="6" class="vacio">No hay citas para hoy.</td></tr>
+  </table></div>
+</main>
+<th:block th:replace="~{admin/modales :: confirmar-cancelar('/admin/panel')}"></th:block>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body></html>

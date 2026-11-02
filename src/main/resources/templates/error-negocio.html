@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Aviso')}"></head>
+<body>
+<main class="container" style="max-width:560px;margin-top:4rem">
+  <div class="card">
+    <h1>No se pudo completar la operación</h1>
+    <p class="errmsg" th:text="${mensaje}">Mensaje</p>
+    <a class="btn" href="javascript:history.back()">Volver</a> <a class="btn sec" th:href="@{/}">Ir al inicio</a>
+  </div>
+</main>
+</body></html>

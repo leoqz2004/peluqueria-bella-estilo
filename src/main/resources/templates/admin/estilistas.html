@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Estilistas')}"></head>
+<body class="with-side">
+<aside th:replace="~{fragments/layout :: side('estilistas')}"></aside>
+<main class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div><h1>Estilistas y horarios</h1><p class="sub">Registro del personal y su disponibilidad semanal</p></div>
+    <button class="btn" data-open-modal="m-estilista">+ Nuevo estilista</button>
+  </div>
+  <div class="split" style="grid-template-columns:1fr 1fr">
+    <div class="tablewrap"><table>
+      <tr><th>ESTILISTA</th><th>ESPECIALIDAD</th><th></th></tr>
+      <tr th:each="e : ${estilistas}"><td class="n" th:text="${e.nombreCorto}">Milagros R.</td><td th:text="${e.especialidad}">Corte</td>
+        <td><a class="t-vino" th:href="@{/admin/estilistas(id=${e.id})}">Ver horario</a></td></tr>
+    </table></div>
+    <div class="card" th:if="${elegido != null}">
+      <h3 style="margin:0" th:text="'Horario de ' + ${elegido.nombreCorto}">Horario</h3>
+      <table><tr><th>DÍA</th><th>INICIO</th><th>FIN</th></tr>
+        <tr th:each="h : ${horarios}"><td th:text="${h.diaNombre}">Lunes</td><td th:text="${#temporals.format(h.horaInicio,'HH:mm')}">09:00</td><td th:text="${#temporals.format(h.horaFin,'HH:mm')}">19:00</td></tr></table>
+      <p class="sub" style="margin-top:.8rem;font-size:.8rem">La edición del horario se implementará en el siguiente avance.</p>
+    </div>
+  </div>
+</main>
+<dialog id="m-estilista">
+  <h3>Nuevo estilista</h3>
+  <form method="post" th:action="@{/admin/estilistas}">
+    <div class="grid g2">
+      <div><label>Nombres</label><input name="nombres" required></div><div><label>Apellidos</label><input name="apellidos" required></div>
+      <div><label>Correo</label><input type="email" name="email" required></div><div><label>Teléfono</label><input name="telefono" required></div>
+      <div><label>Contraseña inicial (mín. 8)</label><input type="password" name="claveInicial" minlength="8" required></div>
+      <div><label>Especialidad</label><input name="especialidad" required></div>
+    </div>
+    <label>Servicios que realiza</label>
+    <div class="grid g2"><label class="chk" th:each="s : ${servicios}"><input type="checkbox" name="servicioIds" th:value="${s.id}"> <span th:text="${s.nombre}"></span></label></div>
+    <label>Días de atención</label>
+    <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+      <label class="chk"><input type="checkbox" name="dias" value="1"> L</label><label class="chk"><input type="checkbox" name="dias" value="2"> M</label>
+      <label class="chk"><input type="checkbox" name="dias" value="3"> X</label><label class="chk"><input type="checkbox" name="dias" value="4"> J</label>
+      <label class="chk"><input type="checkbox" name="dias" value="5"> V</label><label class="chk"><input type="checkbox" name="dias" value="6"> S</label>
+      <label class="chk"><input type="checkbox" name="dias" value="7"> D</label></div>
+    <div class="grid g2"><div><label>Desde</label><input type="time" name="horaInicio" value="09:00" required></div><div><label>Hasta</label><input type="time" name="horaFin" value="19:00" required></div></div>
+    <div class="modal-pie"><button type="button" class="btn sec" data-close>Cancelar</button><button class="btn">Registrar</button></div>
+  </form>
+</dialog>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body></html>

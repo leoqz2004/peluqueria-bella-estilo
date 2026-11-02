@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Clientes')}"></head>
+<body class="with-side">
+<aside th:replace="~{fragments/layout :: side('clientes')}"></aside>
+<main class="content">
+  <h1>Clientes registrados</h1><p class="sub">Consulta de clientes y cantidad de atenciones</p>
+  <form method="get" style="max-width:340px;margin-bottom:1rem"><input name="q" th:value="${q}" placeholder="🔍 Buscar cliente (nombre o correo)"></form>
+  <div class="tablewrap"><table>
+    <tr><th>CLIENTE</th><th>TELÉFONO</th><th>CORREO</th><th>ÚLTIMA VISITA</th><th>CITAS</th></tr>
+    <tr th:each="r : ${clientes}"><td class="n" th:text="${r.cliente.nombreCompleto}">Cliente</td><td th:text="${r.cliente.telefono}">tel</td>
+      <td th:text="${r.cliente.email}">correo</td><td th:text="${r.ultimaVisita != null ? #temporals.format(r.ultimaVisita,'dd/MM/yyyy') : '—'}">fecha</td>
+      <td th:text="${r.citas}">0</td></tr>
+    <tr th:if="${#lists.isEmpty(clientes)}"><td colspan="5" class="vacio">Sin resultados.</td></tr>
+  </table></div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body></html>

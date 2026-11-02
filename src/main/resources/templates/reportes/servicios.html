@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Servicios y ocupación')}"></head>
+<body class="with-side">
+<aside th:replace="~{fragments/layout :: side('reportes')}"></aside>
+<main class="content">
+  <h1>Servicios más solicitados y ocupación</h1><p class="sub">Citas confirmadas y atendidas</p>
+  <p><a class="btn sec" th:href="@{/admin/reportes/citas}">← Citas por período</a></p>
+  <div class="grid g2">
+    <div class="card"><h3 style="margin:0">Servicios más solicitados</h3>
+      <p class="vacio" th:if="${#lists.isEmpty(ranking)}">Sin datos.</p>
+      <div class="barra" th:each="r : ${ranking}"><div class="fila"><span th:text="${r[0]}">Servicio</span><b th:text="${r[1]}">0</b></div>
+        <div class="pista"><div class="rell" th:style="'width:' + ${r[1] * 100.0 / max} + '%'"></div></div></div>
+    </div>
+    <div class="card"><h3 style="margin:0">Minutos atendidos por estilista</h3>
+      <p class="sub" style="font-size:.8rem" th:text="'Del ' + ${#temporals.format(desde,'dd/MM')} + ' al ' + ${#temporals.format(hasta,'dd/MM/yyyy')}">periodo</p>
+      <p class="vacio" th:if="${#maps.isEmpty(minutos)}">Sin citas atendidas en el período.</p>
+      <div class="barra ATENDIDA" th:each="m : ${minutos}"><div class="fila"><span th:text="${m.key}">Estilista</span><b th:text="${m.value + ' min'}">0</b></div>
+        <div class="pista"><div class="rell" th:style="'width:' + ${m.value * 100.0 / maxMin} + '%'"></div></div></div>
+      <p class="sub" style="font-size:.78rem">El % de ocupación (minutos atendidos ÷ disponibles) se añadirá en el siguiente avance.</p>
+    </div>
+  </div>
+</main>
+</body></html>

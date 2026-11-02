@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reporte de citas')}"></head>
+<body class="with-side">
+<aside th:replace="~{fragments/layout :: side('reportes')}"></aside>
+<main class="content">
+  <h1>Reporte de citas por período</h1>
+  <p class="sub" th:text="'Del ' + ${#temporals.format(desde,'dd/MM/yyyy')} + ' al ' + ${#temporals.format(hasta,'dd/MM/yyyy')}">Periodo</p>
+  <form method="get" class="card" style="display:flex;gap:.8rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
+    <div><label>Desde</label><input type="date" name="desde" th:value="${desde}"></div><div><label>Hasta</label><input type="date" name="hasta" th:value="${hasta}"></div>
+    <button class="btn">Generar</button><a class="btn sec" th:href="@{/admin/reportes/servicios}">Servicios y ocupación →</a>
+    <button type="button" class="btn sec" disabled title="Exportación PDF/Excel: próximo avance">Exportar PDF / Excel</button>
+  </form>
+  <div class="grid g4">
+    <div class="card kpi"><small>TOTAL DE CITAS</small><b th:text="${total}">0</b></div>
+    <div class="card kpi"><small>ATENDIDAS</small><b class="c-ok" th:text="${nAtendidas}">0</b></div>
+    <div class="card kpi"><small>CANCELADAS</small><b class="c-warn" th:text="${nCanceladas}">0</b></div>
+    <div class="card kpi"><small>AUSENCIAS</small><b class="c-gold" th:text="${nAusentes}">0</b></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><h3 style="margin:0">Citas por estado</h3>
+    <div class="barra" th:each="e : ${porEstado}" th:classappend="${e.key}">
+      <div class="fila"><span th:text="${e.key}">Estado</span><b th:text="${e.value}">0</b></div>
+      <div class="pista"><div class="rell" th:style="'width:' + ${e.value * 100.0 / max} + '%'"></div></div>
+    </div>
+  </div>
+</main>
+</body></html>

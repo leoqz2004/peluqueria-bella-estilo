@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mi agenda')}"></head>
+<body class="with-side">
+<aside th:replace="~{fragments/layout :: side('agenda')}"></aside>
+<main class="content">
+  <h1 th:text="'Mi agenda — ' + ${yo.nombreCorto}">Mi agenda</h1>
+  <p class="sub" th:text="${#temporals.format(fecha,'EEEE d MMMM yyyy')}">fecha</p>
+  <form method="get" style="display:flex;gap:.6rem;max-width:300px;margin-bottom:1rem"><input type="date" name="fecha" th:value="${fecha}"><button class="btn sec">Ver</button></form>
+  <div class="tabs" data-tabs>
+    <button class="chip" data-tab="pend" th:text="'Pendientes (' + ${#lists.size(pendientes)} + ')'">Pendientes</button>
+    <button class="chip" data-tab="aten" th:text="'Atendidas (' + ${#lists.size(atendidas)} + ')'">Atendidas</button>
+  </div>
+  <div data-panel="pend">
+    <p class="vacio" th:if="${#lists.isEmpty(pendientes)}">No tienes citas pendientes ese día.</p>
+    <div class="cita" th:each="c : ${pendientes}">
+      <b style="font-size:1.1rem" th:text="${#temporals.format(c.horaInicio,'HH:mm')}">15:00</b>
+      <div class="info"><b th:text="${c.cliente.nombreCompleto}">Cliente</b><small th:text="${c.serviciosTexto + ' · ' + c.duracionMin + ' min'}">Servicio</small></div>
+      <span class="badge" th:classappend="${c.estado}" th:text="${c.estado}">CONFIRMADA</span>
+      <form th:if="${c.estado.name() == 'PENDIENTE'}" th:action="@{/admin/citas/{id}/confirmar(id=${c.id})}" method="post"><input type="hidden" name="volver" value="/agenda"><button class="btn sm">Confirmar</button></form>
+      <form th:if="${c.estado.name() == 'CONFIRMADA'}" th:action="@{/agenda/{id}/atendida(id=${c.id})}" method="post" class="acc">
+        <button class="btn sm" name="resultado" value="ATENDIDA">Marcar atendida</button><button class="btn sec sm" name="resultado" value="AUSENTE">Ausente</button></form>
+    </div>
+  </div>
+  <div data-panel="aten">
+    <p class="vacio" th:if="${#lists.isEmpty(atendidas)}">Aún no hay citas atendidas ese día.</p>
+    <div class="cita" th:each="c : ${atendidas}">
+      <b style="font-size:1.1rem" th:text="${#temporals.format(c.horaInicio,'HH:mm')}">09:30</b>
+      <div class="info"><b th:text="${c.cliente.nombreCompleto}">Cliente</b><small th:text="${c.serviciosTexto}">Servicio</small></div>
+      <span class="badge" th:classappend="${c.estado}" th:text="${c.estado}">ATENDIDA</span>
+    </div>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body></html>
