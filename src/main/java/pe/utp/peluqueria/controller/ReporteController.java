@@ -2,11 +2,16 @@ package pe.utp.peluqueria.controller;
 
 import java.time.LocalDate;
 import java.util.Map;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pe.utp.peluqueria.model.EstadoCita;
+import pe.utp.peluqueria.service.ExcelExportService;
 import pe.utp.peluqueria.service.ReporteService;
 
 /** P14 y P15: reportes de gestión. */
@@ -14,7 +19,24 @@ import pe.utp.peluqueria.service.ReporteService;
 @RequestMapping("/admin/reportes")
 public class ReporteController {
     private final ReporteService reportes;
-    public ReporteController(ReporteService reportes) { this.reportes = reportes; }
+    private final ExcelExportService excel;
+    public ReporteController(ReporteService reportes, ExcelExportService excel) { this.reportes = reportes; this.excel = excel; }
+
+    /** Exporta el reporte de gestion del periodo a Excel (Apache POI). Solo ADMINISTRADOR (ver SecurityConfig). */
+    @GetMapping("/excel")
+    public ResponseEntity<byte[]> exportarExcel(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        LocalDate h = hasta != null ? hasta : LocalDate.now().plusMonths(1);
+        LocalDate d = desde != null ? desde : LocalDate.now().minusMonths(1);
+        byte[] libro = excel.reporteGestion(d, h, reportes.citasPorEstado(d, h),
+                                            reportes.serviciosMasSolicitados(), reportes.minutosPorEstilista(d, h));
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                .filename("reporte-bella-estilo-" + d + "_" + h + ".xlsx").build().toString())
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(libro);
+    }
 
     @GetMapping("/citas")
     public String citas(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,

@@ -1,11 +1,14 @@
 package pe.utp.peluqueria.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.Authentication;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +18,7 @@ import pe.utp.peluqueria.dto.ReservaDto;
 import pe.utp.peluqueria.model.Cita;
 import pe.utp.peluqueria.model.Usuario;
 import pe.utp.peluqueria.service.*;
+import pe.utp.peluqueria.util.Acceso;
 
 @Controller
 public class CitaController {
@@ -22,18 +26,41 @@ public class CitaController {
     private final CitaService citas;
     private final CatalogoService catalogo;
     private final UsuarioService usuarios;
+    private final ReservaPendienteService pendientes;
 
-    public CitaController(CitaService citas, CatalogoService catalogo, UsuarioService usuarios) {
-        this.citas = citas; this.catalogo = catalogo; this.usuarios = usuarios;
+    public CitaController(CitaService citas, CatalogoService catalogo, UsuarioService usuarios,
+                          ReservaPendienteService pendientes) {
+        this.citas = citas; this.catalogo = catalogo; this.usuarios = usuarios; this.pendientes = pendientes;
     }
 
     /** P04–P06: asistente de reserva (servicio → estilista → horario → confirmar). */
     @GetMapping("/reservar")
-    public String asistente(@RequestParam(required = false) Long servicio, Model m) {
+    public String asistente(@RequestParam(required = false) Long servicio,
+                            @RequestParam(required = false) String retomar,
+                            Authentication auth, HttpSession sesion, Model m) {
+        if (Acceso.autenticado(auth) && !Acceso.esCliente(auth)) return "redirect:/inicio";
         m.addAttribute("servicios", catalogo.catalogoActivo());
         m.addAttribute("estilistas", catalogo.estilistasActivos());
         m.addAttribute("preselect", servicio);
+        if (retomar != null && Acceso.esCliente(auth)) {            // vuelve de iniciar sesion: restaura la seleccion
+            var pendiente = pendientes.obtenerVigente(sesion);
+            if (pendiente.isEmpty()) return "redirect:/reservar?vencida";
+            m.addAttribute("pendiente", pendiente.get());
+        }
         return "reservar";
+    }
+
+    /**
+     * Confirmar cita SIN sesion: se conserva la seleccion en la sesion del servidor y se envia al login.
+     * No crea ninguna cita; la cita se registra solo cuando un cliente autenticado confirma en POST /reservar.
+     */
+    @PostMapping("/reservar/pendiente")
+    public String guardarPendiente(@Valid @ModelAttribute ReservaDto dto, BindingResult br,
+                                   Authentication auth, HttpSession sesion) {
+        if (Acceso.autenticado(auth)) return "redirect:/reservar";
+        if (br.hasErrors()) return "redirect:/reservar?error";
+        pendientes.guardar(sesion, dto);
+        return "redirect:/login?reservar";
     }
 
     /** JSON con las horas libres (paso 3 del asistente). */
@@ -45,9 +72,10 @@ public class CitaController {
     }
 
     @PostMapping("/reservar")
-    public String reservar(@Valid @ModelAttribute ReservaDto dto, BindingResult br, Principal p) {
+    public String reservar(@Valid @ModelAttribute ReservaDto dto, BindingResult br, Principal p, HttpSession sesion) {
         if (br.hasErrors()) return "redirect:/reservar?error";
         citas.crearCita(usuarios.porEmail(p.getName()).getId(), dto);
+        pendientes.descartar(sesion);
         return "redirect:/mis-citas?creada";
     }
 
@@ -65,7 +93,8 @@ public class CitaController {
     public String cancelar(@PathVariable Long id, @RequestParam(required = false) String motivo,
                            @RequestParam(required = false) String volver, Principal p) {
         Usuario u = usuarios.porEmail(p.getName());
-        citas.cancelar(id, motivo == null || motivo.isBlank() ? "Cancelada" : motivo.trim(), u);
+        // Commons Lang3: se limpia y limita el texto libre (maximo 200 caracteres) antes de guardarlo.
+        citas.cancelar(id, StringUtils.defaultIfBlank(StringUtils.abbreviate(StringUtils.strip(motivo), 200), "Cancelada"), u);
         if ("ADMINISTRADOR".equals(u.getRol().getNombre())) return "redirect:" + (volver != null && DESTINOS.contains(volver) ? volver : "/admin/citas");
         return "redirect:/mis-citas?cancelada";
     }

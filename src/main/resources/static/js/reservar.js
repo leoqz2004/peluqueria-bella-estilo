@@ -106,5 +106,20 @@
 
   // servicio preseleccionado desde el catalogo
   $$('input[name=servicioIds]').forEach(c => c.closest('.opcion').classList.toggle('sel', c.checked));
+
+  // Retomar la reserva guardada antes de iniciar sesion (solo llega aqui un CLIENTE autenticado)
+  const d = root.dataset;
+  if (d.pendEstilista) {
+    const ids = (d.pendServicios || '').split(',');
+    $$('input[name=servicioIds]').forEach(c => { c.checked = ids.includes(c.value); c.closest('.opcion').classList.toggle('sel', c.checked); });
+    const card = $$('.est-card').find(e => e.dataset.id === d.pendEstilista);
+    if (card && servSel().length && d.pendFecha && d.pendHora) {
+      card.classList.add('sel');
+      st.estilista = { id: card.dataset.id, nombre: card.dataset.nombre };
+      st.fecha = d.pendFecha; st.hora = d.pendHora;
+      mostrar(4);
+      return;
+    }
+  }
   mostrar(1);
 })();

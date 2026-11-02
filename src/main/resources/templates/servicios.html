@@ -5,6 +5,7 @@
 <header th:replace="~{fragments/layout :: topnav('servicios')}"></header>
 <main class="container">
   <h1>Catálogo de servicios</h1><p class="sub">Elige el servicio que deseas reservar</p>
+  <div class="okmsg" th:if="${param.salir}">Sesión cerrada. ¡Te esperamos pronto!</div>
   <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
     <input id="buscar-servicio" placeholder="🔍 Buscar corte, tinte, peinado..." style="max-width:300px">
     <div class="chips" style="margin:0">

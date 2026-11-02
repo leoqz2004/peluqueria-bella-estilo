@@ -10,6 +10,7 @@
   </div>
   <div class="formbox"><div class="inner">
     <h1>Bienvenida de nuevo</h1><p class="sub">Ingresa a tu cuenta para gestionar tus citas</p>
+    <div class="infomsg" th:if="${param.reservar}">Para confirmar tu cita primero debes iniciar sesión. Conservaremos tu selección de servicio, estilista y horario.</div>
     <div class="errmsg" th:if="${param.error}">Correo o contraseña incorrectos.</div>
     <div class="okmsg" th:if="${param.registrado}">Registro exitoso. Ya puedes iniciar sesión.</div>
     <div class="okmsg" th:if="${param.salir}">Sesión cerrada.</div>
@@ -19,6 +20,7 @@
       <p style="text-align:right;margin:.4rem 0"><a href="#" title="Pendiente de implementar (RF03)"><b>¿Olvidaste tu contraseña?</b></a></p>
       <button class="btn" style="width:100%">Iniciar sesión</button>
     </form>
+    <p class="centro"><a th:href="@{/servicios}">← Volver al catálogo de servicios</a></p>
     <p class="centro">¿Aún no tienes cuenta? <a th:href="@{/registro}"><b>Regístrate</b></a></p>
   </div></div>
 </div>

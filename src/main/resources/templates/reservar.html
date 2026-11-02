@@ -3,9 +3,13 @@
 <head th:replace="~{fragments/layout :: head('Reservar cita')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: topnav('reservar')}"></header>
-<main class="container" id="wizard">
+<main class="container" id="wizard"
+      th:data-pend-servicios="${pendiente?.serviciosCsv}" th:data-pend-estilista="${pendiente?.estilistaId}"
+      th:data-pend-fecha="${pendiente?.fecha}" th:data-pend-hora="${pendiente?.hora}">
   <div class="crumbs">Inicio › Servicios › <b>Reservar cita</b></div>
   <h1>Nueva reserva</h1><p class="sub">Completa los pasos para agendar tu cita</p>
+  <div class="errmsg" th:if="${param.vencida}">Tu reserva guardada venció. Vuelve a elegir tus datos.</div>
+  <div class="okmsg" th:if="${pendiente != null}">Sesión iniciada. Revisa tu selección y pulsa «Confirmar cita».</div>
   <div class="errmsg" th:if="${param.error}">Revisa los datos de la reserva e inténtalo otra vez.</div>
   <div class="pasos">
     <span class="paso on" data-paso="1"><i>1</i> Servicio</span><span class="paso" data-paso="2"><i>2</i> Estilista</span>
@@ -46,7 +50,8 @@
       <!-- Paso 4 -->
       <section class="paso-panel hidden" data-paso="4">
         <h3>Confirma tu cita</h3>
-        <form th:action="@{/reservar}" method="post" class="card">
+        <p class="infomsg" th:if="${yo == null}">Para confirmar tu cita primero debes iniciar sesión. Conservaremos tu selección.</p>
+        <form th:action="${yo == null} ? @{/reservar/pendiente} : @{/reservar}" method="post" class="card">
           <table>
             <tr><td>Servicio(s)</td><td class="n" id="conf-servicios"></td></tr>
             <tr><td>Estilista</td><td class="n" id="conf-estilista"></td></tr>

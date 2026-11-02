@@ -9,7 +9,7 @@
   <form method="get" class="card" style="display:flex;gap:.8rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
     <div><label>Desde</label><input type="date" name="desde" th:value="${desde}"></div><div><label>Hasta</label><input type="date" name="hasta" th:value="${hasta}"></div>
     <button class="btn">Generar</button><a class="btn sec" th:href="@{/admin/reportes/servicios}">Servicios y ocupación →</a>
-    <button type="button" class="btn sec" disabled title="Exportación PDF/Excel: próximo avance">Exportar PDF / Excel</button>
+    <a class="btn sec" th:href="@{/admin/reportes/excel(desde=${desde},hasta=${hasta})}">Exportar Excel</a>
   </form>
   <div class="grid g4">
     <div class="card kpi"><small>TOTAL DE CITAS</small><b th:text="${total}">0</b></div>
