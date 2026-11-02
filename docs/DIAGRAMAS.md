@@ -44,7 +44,7 @@ sequenceDiagram
     C-->>U: redirect /login?reservar ("primero debes iniciar sesión")
     U->>L: POST /login (credenciales)
     alt rol CLIENTE y reserva vigente
-        L-->>U: redirect /reservar?retomar (paso 4 restaurado)
+        L-->>U: redirect /reservar?retomar=1 (paso 4 restaurado)
         U->>C: POST /reservar (Confirmar)
         C->>S: crearCita (RN01–RN03)
         C->>P: descartar(sesión)

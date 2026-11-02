@@ -130,7 +130,7 @@ Para evitar reservas simultáneas sobre el mismo horario, `CitaService.crearCita
 La aplicación **arranca como invitado** en el catálogo. El invitado puede explorar servicios y recorrer el asistente de reserva, pero **no se crea ninguna cita** hasta que un cliente autenticado confirma.
 
 1. En el paso 4 el formulario de un invitado apunta a `POST /reservar/pendiente` (CSRF activo). Si los datos son válidos se guardan en la **sesión HTTP** como `ReservaPendiente` (inmutable, Guava) y se redirige a `/login?reservar`, que muestra «primero debes iniciar sesión».
-2. `LoginExitosoHandler` decide el destino: **CLIENTE** con reserva vigente → `/reservar?retomar` (paso 4 restaurado); **ADMINISTRADOR / ESTILISTA** → `/inicio` (su ventana habitual) y la reserva se **descarta**.
+2. `LoginExitosoHandler` decide el destino: **CLIENTE** con reserva vigente → `/reservar?retomar=1` (paso 4 restaurado); **ADMINISTRADOR / ESTILISTA** → `/inicio` (su ventana habitual) y la reserva se **descarta**.
 3. La reserva caduca a los 30 min (`app.reserva-pendiente.minutos`), se borra al confirmar y al cerrar sesión (la sesión se invalida).
 4. Al confirmar, `CitaService.crearCita` vuelve a validar todo (RN01–RN03); la sesión nunca es fuente de confianza.
 5. Administrador y estilista autenticados que abran `/servicios`, `/reservar` o `/notificaciones` son redirigidos a su propia ventana.

@@ -38,7 +38,7 @@ class LoginExitosoHandlerTest {
     @Test
     void clienteConReservaVuelveAConfirmar() throws Exception {
         handler.onAuthenticationSuccess(req, res, usuario("valeria.rojas@correo.com", "CLIENTE"));
-        assertEquals("/reservar?retomar", res.getRedirectedUrl());
+        assertEquals("/reservar?retomar=1", res.getRedirectedUrl());
         assertTrue(pendientes.obtenerVigente(sesion).isPresent(), "la reserva se conserva para el cliente");
     }
 

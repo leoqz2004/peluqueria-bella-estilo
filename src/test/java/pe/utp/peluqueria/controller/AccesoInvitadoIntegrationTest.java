@@ -75,9 +75,9 @@ class AccesoInvitadoIntegrationTest {
 
         mvc.perform(post("/login").session(sesion).with(csrf())
                 .param("username", "valeria.rojas@correo.com").param("password", "Cliente123!"))
-            .andExpect(redirectedUrl("/reservar?retomar"));
+            .andExpect(redirectedUrl("/reservar?retomar=1"));
 
-        String html = mvc.perform(get("/reservar?retomar").session(sesion)).andExpect(status().isOk())
+        String html = mvc.perform(get("/reservar?retomar=1").session(sesion)).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertTrue(html.contains("data-pend-estilista=\"1\""), "el asistente recibe la seleccion guardada");
     }

@@ -16,7 +16,7 @@ import pe.utp.peluqueria.util.Privacidad;
 /**
  * Decide a donde ir despues de iniciar sesion.
  * <ul>
- *   <li>CLIENTE con reserva pendiente vigente: vuelve al paso de confirmacion ({@code /reservar?retomar}).</li>
+ *   <li>CLIENTE con reserva pendiente vigente: vuelve al paso de confirmacion ({@code /reservar?retomar=1}).</li>
  *   <li>Cualquier otro caso: {@code /inicio}, que enruta a Administrador, Estilista o Cliente.</li>
  *   <li>Administrador o Estilista: la reserva pendiente se descarta (solo aplica a clientes).</li>
  * </ul>
@@ -34,7 +34,7 @@ public class LoginExitosoHandler implements AuthenticationSuccessHandler {
         HttpSession sesion = request.getSession(false);
         String destino = "/inicio";
         if (Acceso.esCliente(auth) && pendientes.obtenerVigente(sesion).isPresent()) {
-            destino = "/reservar?retomar";
+            destino = "/reservar?retomar=1";
         } else {
             pendientes.descartar(sesion);
         }
