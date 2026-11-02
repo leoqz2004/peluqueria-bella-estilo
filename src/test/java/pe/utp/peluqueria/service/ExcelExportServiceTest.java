@@ -24,8 +24,10 @@ class ExcelExportServiceTest {
         try (var libro = new XSSFWorkbook(new ByteArrayInputStream(bytes))) {
             assertEquals(3, libro.getNumberOfSheets());
             Sheet citas = libro.getSheet("Citas por estado");
-            assertEquals("ATENDIDA", citas.getRow(3).getCell(0).getStringCellValue());
-            assertEquals(7.0, citas.getRow(3).getCell(1).getNumericCellValue());
+            // EnumMap respeta el orden del enum: CANCELADA (fila 3) antes que ATENDIDA (fila 4)
+            assertEquals("CANCELADA", citas.getRow(3).getCell(0).getStringCellValue());
+            assertEquals("ATENDIDA", citas.getRow(4).getCell(0).getStringCellValue());
+            assertEquals(7.0, citas.getRow(4).getCell(1).getNumericCellValue());
             Sheet servicios = libro.getSheet("Servicios solicitados");
             assertEquals(CellType.STRING, servicios.getRow(1).getCell(0).getCellType(), "se guarda como texto, nunca como formula");
             assertEquals("Milagros Ramos", libro.getSheet("Minutos por estilista").getRow(1).getCell(0).getStringCellValue());
